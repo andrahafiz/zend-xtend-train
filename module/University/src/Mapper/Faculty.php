@@ -17,7 +17,7 @@ class Faculty extends AbstractMapper implements MapperInterface
      */
     public function getEntityRepository()
     {
-        return $this->getEntityManager()->getRepository('University\\Entity\\University');
+        return $this->getEntityManager()->getRepository('University\\Entity\\Faculty');
     }
 
     public function fetchAll(array $params, $order = null, $asc = false)
