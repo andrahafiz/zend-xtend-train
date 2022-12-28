@@ -12,6 +12,13 @@ use University\Entity\University;
  */
 class UniversityStrategy implements StrategyInterface
 {
+    protected $logoUrl;
+
+    public function __construct($logoUrl = null)
+    {
+        $this->setLogoUrl($logoUrl);
+    }
+
     /**
      * Converts the given value so that it can be extracted by the hydrator.
      *
@@ -28,7 +35,8 @@ class UniversityStrategy implements StrategyInterface
             $values = [
                 "uuid" => $value->getUuid(),
                 "name" => $value->getName(),
-                "address"  => $value->getAddress()
+                "address"  => $value->getAddress(),
+                "logo"  => $this->logoUrl. '/'. $value->getLogo(),
             ];
 
             return $values;
@@ -50,5 +58,26 @@ class UniversityStrategy implements StrategyInterface
     public function hydrate($value, array $data = null)
     {
         return $value;
+    }
+
+
+    /**
+     * Get the value of logoUrl
+     */
+    public function getLogoUrl()
+    {
+        return $this->logoUrl;
+    }
+
+    /**
+     * Set the value of logoUrl
+     *
+     * @return  self
+     */
+    public function setLogoUrl($logoUrl)
+    {
+        $this->logoUrl = $logoUrl;
+
+        return $this;
     }
 }
