@@ -8,18 +8,18 @@ use Zend\EventManager\ListenerAggregateTrait;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\Exception\InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
-use University\Mapper\FacultyTrait as FacultyMapperTrait;
-use University\Entity\Faculty as FacultyEntity;
-use University\V1\FacultyEvent;
+use University\Mapper\UniversityTrait as UniversityMapperTrait;
+use University\Entity\University as UniversityEntity;
+use University\V1\UniversityEvent;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Log\Exception\RuntimeException;
 
-class FacultyEventListener implements ListenerAggregateInterface
+class UniversityEventListener implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
     use EventManagerAwareTrait;
     use LoggerAwareTrait;
-    use FacultyMapperTrait;
+    use UniversityMapperTrait;
 
     protected $fileConfig;
     protected $universityEvent;
@@ -29,9 +29,9 @@ class FacultyEventListener implements ListenerAggregateInterface
     protected $userProfileHydrator;
 
     public function __construct(
-        \University\Mapper\Faculty $universityMapper
+        \University\Mapper\University $universityMapper
     ) {
-        $this->setFacultyMapper($universityMapper);
+        $this->setUniversityMapper($universityMapper);
     }
 
     /**
@@ -41,13 +41,13 @@ class FacultyEventListener implements ListenerAggregateInterface
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(
-            FacultyEvent::EVENT_CREATE_FACULTY,
-            [$this, 'createFaculty'],
+            UniversityEvent::EVENT_CREATE_UNIVERSITY,
+            [$this, 'createUniversity'],
             500
         );
     }
 
-    public function createFaculty(FacultyEvent $event)
+    public function createUniversity(UniversityEvent $event)
     {
         try {
             if (!$event->getInputFilter() instanceof InputFilterInterface) {
@@ -58,11 +58,11 @@ class FacultyEventListener implements ListenerAggregateInterface
             $bodyRequest['logo'] = $bodyRequest['logo']['tmp_name'];
             $bodyRequest = str_replace("data", "logo", $bodyRequest);
 
-            $universityEntity = new FacultyEntity;
-            $hydrateEntity  = $this->getFacultyHydrator()->hydrate($bodyRequest, $universityEntity);
+            $universityEntity = new UniversityEntity;
+            $hydrateEntity  = $this->getUniversityHydrator()->hydrate($bodyRequest, $universityEntity);
 
-            $entityResult   = $this->getFacultyMapper()->save($hydrateEntity);
-            $event->setFacultyEntity($entityResult);
+            $entityResult   = $this->getUniversityMapper()->save($hydrateEntity);
+            $event->setUniversityEntity($entityResult);
         } catch (RuntimeException $e) {
             $event->stopPropagation(true);
             $this->logger->log(
@@ -80,7 +80,7 @@ class FacultyEventListener implements ListenerAggregateInterface
     /**
      * Get the value of universityHydrator
      */
-    public function getFacultyHydrator()
+    public function getUniversityHydrator()
     {
         return $this->universityHydrator;
     }
@@ -90,7 +90,7 @@ class FacultyEventListener implements ListenerAggregateInterface
      *
      * @return  self
      */
-    public function setFacultyHydrator($universityHydrator)
+    public function setUniversityHydrator($universityHydrator)
     {
         $this->universityHydrator = $universityHydrator;
 
