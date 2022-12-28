@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="HelloEntity//QrCodeOwner" table="qr_code_owner">
+    <indexes>
+      <index name="index3" columns="user_profile_uuid"/>
+      <index name="index2" columns="qr_code_uuid"/>
+      <index name="fk_qrcodeownertype_index6" columns="qr_code_owner_type_uuid"/>
+    </indexes>
+    <id name="uuid" type="string" column="uuid" length="36">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="expiredAt" type="datetime" column="expired_at" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at" nullable="true"/>
+    <field name="updatedAt" type="datetime" column="updated_at" nullable="true"/>
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <many-to-one field="qrCodeUuid" target-entity="HelloEntity//QrCode" fetch="LAZY">
+      <join-columns>
+        <join-column name="qr_code_uuid" referenced-column-name="uuid"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="userProfileUuid" target-entity="HelloEntity//UserProfile" fetch="LAZY">
+      <join-columns>
+        <join-column name="user_profile_uuid" referenced-column-name="uuid"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="qrCodeOwnerTypeUuid" target-entity="HelloEntity//QrCodeOwnerType" fetch="LAZY">
+      <join-columns>
+        <join-column name="qr_code_owner_type_uuid" referenced-column-name="uuid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

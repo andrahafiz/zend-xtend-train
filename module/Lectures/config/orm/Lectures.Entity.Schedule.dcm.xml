@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="Lectures\Entity\Schedule" table="schedule">
+    <indexes>
+      <index name="schedule_room_idx" columns="room_uuid"/>
+      <index name="schedule_led_by_idx" columns="led_by_uuid"/>
+      <index name="fk_schedule_led_by_idx" columns="led_by_uuid,room_uuid"/>
+    </indexes>
+    <id name="uuid" type="string" column="uuid" length="36">
+      <generator strategy="UUID"/>
+    </id>
+    <field name="starttime" type="datetime" column="startTime" nullable="true"/>
+    <field name="endtime" type="datetime" column="endTime" nullable="true"/>
+    <field name="topic" type="string" column="topic" length="100" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="description" type="string" column="description" length="200" nullable="true">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="createdAt" type="datetime" column="created_at" nullable="true">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at" nullable="true">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" />
+    <many-to-one field="ledBy" target-entity="User\Entity\UserProfile" fetch="LAZY">
+      <join-columns>
+        <join-column name="led_by_uuid" referenced-column-name="uuid"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="room" target-entity="Univesity\Entity\Room" fetch="LAZY">
+      <join-columns>
+        <join-column name="room_uuid" referenced-column-name="uuid"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
