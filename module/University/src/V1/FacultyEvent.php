@@ -12,7 +12,7 @@ class FacultyEvent extends Event
     const EVENT_CREATE_FACULTY_SUCCESS   = 'create.faculty.success';
     const EVENT_CREATE_FACULTY_ERROR     = 'create.faculty.error';
 
-    const EVENT_CREATE_MASS_FACULTY          = 'create.mass.faculty';
+    const  EVENT_CREATE_MASS_FACULTY          = 'create.mass.faculty';
     const EVENT_CREATE_MASS_FACULTY_SUCCESS  = 'create.mass.faculty.success';
     const EVENT_CREATE_MASS_FACULTY_ERROR    = 'create.mass.faculty.error';
     /**
@@ -21,9 +21,9 @@ class FacultyEvent extends Event
 
     protected $units;
 
-    protected $universityEntity;
+    protected $facultyEntity;
 
-    protected $universityCollection;
+    protected $facultyCollection;
 
     /**
      * @var Zend\InputFilter\InputFilterInterface
@@ -44,25 +44,25 @@ class FacultyEvent extends Event
     protected $bodyResponse;
 
     /**
-     * Get the value of universityEntity
+     * Get the value of facultyEntity
      *
      * @return  University\Entity\Faculty
      */
     public function getFacultyEntity()
     {
-        return $this->universityEntity;
+        return $this->facultyEntity;
     }
 
     /**
-     * Set the value of universityEntity
+     * Set the value of facultyEntity
      *
-     * @param  University\Entity\Faculty  $universityEntity
+     * @param  University\Entity\Faculty  $facultyEntity
      *
      * @return  self
      */
-    public function setFacultyEntity( \University\Entity\Faculty $universityEntity)
+    public function setFacultyEntity( \University\Entity\Faculty $facultyEntity)
     {
-        $this->universityEntity = $universityEntity;
+        $this->facultyEntity = $facultyEntity;
 
         return $this;
     }
@@ -136,21 +136,21 @@ class FacultyEvent extends Event
     }
 
     /**
-     * Get the value of universityCollection
+     * Get the value of facultyCollection
      */
     public function getFacultyCollection()
     {
-        return $this->universityCollection;
+        return $this->facultyCollection;
     }
 
     /**
-     * Set the value of universityCollection
+     * Set the value of facultyCollection
      *
      * @return  self
      */
-    public function setFacultyCollection(array $universityCollection)
+    public function setFacultyCollection(array $facultyCollection)
     {
-        $this->universityCollection = $universityCollection;
+        $this->facultyCollection = $facultyCollection;
 
         return $this;
     }

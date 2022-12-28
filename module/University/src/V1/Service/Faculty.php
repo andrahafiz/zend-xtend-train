@@ -18,81 +18,81 @@ class Faculty
 
     use FacultyMapperTrait;
 
-    protected $universityEvent;
+    protected $facultyEvent;
 
     /**
      * Constructor
      *
-     * @param University\Mapper\Faculty   $trackingMapper
+     * @param Faculty\Mapper\Faculty   $trackingMapper
      */
     public function __construct(
-        \University\Mapper\Faculty $universityMapper = null,
+        \University\Mapper\Faculty $facultyMapper = null,
         \User\Mapper\Account $accountMapper = null
     ) {
-        $this->setFacultyMapper($universityMapper);
+        $this->setFacultyMapper($facultyMapper);
         $this->setAccountMapper($accountMapper);
     }
 
 
     /**
-     * Get the value of universityEvent
+     * Get the value of facultyEvent
      */
     public function getFacultyEvent()
     {
-        if ($this->universityEvent == null) {
-            $this->universityEvent = new FacultyEvent();
+        if ($this->facultyEvent == null) {
+            $this->facultyEvent = new FacultyEvent();
         }
-        return $this->universityEvent;
+        return $this->facultyEvent;
     }
 
     /**
-     * Set the value of universityEvent
+     * Set the value of facultyEvent
      *
      * @return  selfinsert bulk gps log
      */
-    public function setFacultyEvent($universityEvent)
+    public function setFacultyEvent($facultyEvent)
     {
-        $this->universityEvent = $universityEvent;
+        $this->facultyEvent = $facultyEvent;
 
         return $this;
     }
 
     public function createFaculty($inputFilter)
     {
-        $universityEvent = $this->getFacultyEvent();
-        $universityEvent->setInputFilter($inputFilter);
+        $facultyEvent = $this->getFacultyEvent();
+        $facultyEvent->setInputFilter($inputFilter);
 
-        $universityEvent->setName(FacultyEvent::EVENT_CREATE_FACULTY);
-        $create = $this->getEventManager()->triggerEvent($universityEvent);
+        $facultyEvent->setName(FacultyEvent::EVENT_CREATE_FACULTY);
+        $create = $this->getEventManager()->triggerEvent($facultyEvent);
         if ($create->stopped()) {
-            $universityEvent->setName(FacultyEvent::EVENT_CREATE_FACULTY_ERROR);
-            $universityEvent->setException($create->last());
-            $this->getEventManager()->triggerEvent($universityEvent);
-            throw $universityEvent->getException();
+            $facultyEvent->setName(FacultyEvent::EVENT_CREATE_FACULTY_ERROR);
+            $facultyEvent->setException($create->last());
+            $this->getEventManager()->triggerEvent($facultyEvent);
+            throw $facultyEvent->getException();
         } else {
-            $universityEvent->setName(FacultyEvent::EVENT_CREATE_FACULTY_SUCCESS);
-            $this->getEventManager()->triggerEvent($universityEvent);
-            return $universityEvent->getFacultyEntity();
+            $facultyEvent->setName(FacultyEvent::EVENT_CREATE_FACULTY_SUCCESS);
+            $this->getEventManager()->triggerEvent($facultyEvent);
+            return $facultyEvent->getFacultyEntity();
         }
     }
 
 
     public function createMassFaculty($account, $units)
     {
-        $universityEvent = $this->getFacultyEvent();
-        $universityEvent->setUserProfile($account);
-        $universityEvent->setUnits($units);
-        $universityEvent->setName(FacultyEvent::EVENT_CREATE_MASS_FACULTY);
-        $create = $this->getEventManager()->triggerEvent($universityEvent);
+        $facultyEvent = $this->getFacultyEvent();
+        $facultyEvent->setUserProfile($account);
+        $facultyEvent->setUnits($units);
+        $facultyEvent->setName(FacultyEvent::EVENT_CREATE_MASS_FACULTY);
+        $create = $this->getEventManager()->triggerEvent($facultyEvent);
         if ($create->stopped()) {
-            $universityEvent->setName(FacultyEvent::EVENT_CREATE_MASS_FACULTY_ERROR);
-            $universityEvent->setException($create->last());
-            $this->getEventManager()->triggerEvent($universityEvent);
-            throw $universityEvent->getException();
+            $facultyEvent->setName(FacultyEvent::EVENT_CREATE_MASS_FACULTY_ERROR);
+            $facultyEvent->setException($create->last());
+            $this->getEventManager()->triggerEvent($facultyEvent);
+            throw $facultyEvent->getException();
         } else {
-            $universityEvent->setName(FacultyEvent::EVENT_CREATE_MASS_FACULTY_SUCCESS);
-            $this->getEventManager()->triggerEvent($universityEvent);
-            return $universityEvent->getFacultyCollection();
+            $facultyEvent->setName(FacultyEvent::EVENT_CREATE_MASS_FACULTY_SUCCESS);
+            $this->getEventManager()->triggerEvent($facultyEvent);
+            return $facultyEvent->getFacultyCollection();
         }
     }
 }

@@ -10,7 +10,7 @@ class FacultyFactory implements FactoryInterface
     {
         $facultyMapper = $container->get(\University\Mapper\Faculty::class);
         $accountMapper  = $container->get(\User\Mapper\Account::class);
-        $facultyService = new University($facultyMapper, $accountMapper);
+        $facultyService = new Faculty($facultyMapper, $accountMapper);
         // $facultyService->setLogger($container->get("logger_default"));
         return $facultyService;
     }

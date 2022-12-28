@@ -15,17 +15,17 @@ trait FacultyTrait
     protected $facultyMapper;
 
     /**
-     * Get the value of universityMapper
+     * Get the value of facultyMapper
      *
      * @return  \University\Mapper\Faculty
      */
     public function getFacultyMapper()
     {
-        return $this->universityMapper;
+        return $this->facultyMapper;
     }
 
     /**
-     * Set the value of universityMapper
+     * Set the value of facultyMapper
      *
      * @param  \University\Mapper\Faculty  $facultyMapper
      *
@@ -33,7 +33,7 @@ trait FacultyTrait
      */
     public function setFacultyMapper(\University\Mapper\Faculty $facultyMapper)
     {
-        $this->universityMapper = $facultyMapper;
+        $this->facultyMapper = $facultyMapper;
 
         return $this;
     }
