@@ -20,6 +20,11 @@ class Module implements ApigilityProviderInterface
         $facultyEventListener = $sm->get(\University\V1\Service\Listener\FacultyEventListener::class);
         $facultyEventListener->attach($facultyService->getEventManager());
 
+        // faculty
+        $majorService = $sm->get(\University\V1\Service\Major::class);
+        $majorEventListener = $sm->get(\University\V1\Service\Listener\MajorEventListener::class);
+        $majorEventListener->attach($majorService->getEventManager());
+
     }
 
     public function getConfig()

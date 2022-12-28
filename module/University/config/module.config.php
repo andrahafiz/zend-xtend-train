@@ -10,6 +10,8 @@ return [
             \University\V1\Service\Listener\UniversityEventListener::class => \University\V1\Service\Listener\UniversityEventListenerFactory::class,
             \University\V1\Service\Faculty::class => \University\V1\Service\FacultyFactory::class,
             \University\V1\Service\Listener\FacultyEventListener::class => \University\V1\Service\Listener\FacultyEventListenerFactory::class,
+            \University\V1\Service\Major::class => \University\V1\Service\MajorFactory::class,
+            \University\V1\Service\Listener\MajorEventListener::class => \University\V1\Service\Listener\MajorEventListenerFactory::class,
         ],
         'abstract_factories' => [
             0 => \University\Mapper\AbstractMapperFactory::class,
@@ -19,6 +21,7 @@ return [
         'factories' => [
             'University\\Hydrator\\University' => \University\V1\Hydrator\UniversityHydratorFactory::class,
             'University\\Hydrator\\Faculty' => \University\V1\Hydrator\FacultyHydratorFactory::class,
+            'University\\Hydrator\\Major' => \University\V1\Hydrator\MajorHydratorFactory::class,
         ],
     ],
     'router' => [
@@ -44,7 +47,7 @@ return [
             'university.rest.major' => [
                 'type' => 'Segment',
                 'options' => [
-                    'route' => '/api/v1//major[/:uuid]',
+                    'route' => '/api/v1/major[/:uuid]',
                     'defaults' => [
                         'controller' => 'University\\V1\\Rest\\Major\\Controller',
                     ],
@@ -267,7 +270,7 @@ return [
                 'entity_identifier_name' => 'uuid',
                 'route_name' => 'university.rest.major',
                 'route_identifier_name' => 'uuid',
-                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+                'hydrator' => 'University\\Hydrator\\Major',
             ],
             \University\V1\Rest\Room\RoomEntity::class => [
                 'entity_identifier_name' => 'uuid',
@@ -332,7 +335,7 @@ return [
             'University\\V1\\Rest\\Major\\Controller' => [
                 'collection' => [
                     'GET' => true,
-                    'POST' => false,
+                    'POST' => true,
                     'PUT' => false,
                     'PATCH' => false,
                     'DELETE' => false,

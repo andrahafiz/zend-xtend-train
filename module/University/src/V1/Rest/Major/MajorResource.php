@@ -1,11 +1,31 @@
 <?php
+
 namespace University\V1\Rest\Major;
 
+use Exception;
+use University\Mapper\MajorTrait;
+use User\Mapper\UserAclTrait;
+use User\Mapper\UserProfileTrait;
+use User\V1\Rest\AbstractResource;
+use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
+use ZF\ApiProblem\ApiProblemResponse;
 
-class MajorResource extends AbstractResourceListener
+class MajorResource extends AbstractResource
 {
+    use UserProfileTrait;
+    use MajorTrait;
+
+    /**
+     * @var \University\V1\Service\Major
+     */
+    protected $majorService;
+
+    public function __construct($userProfileMapper, $majorMapper)
+    {
+        $this->setUserProfileMapper($userProfileMapper);
+        $this->setMajorMapper($majorMapper);
+    }   
     /**
      * Create a resource
      *
@@ -14,7 +34,28 @@ class MajorResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        return new ApiProblem(405, 'The POST method has not been defined');
+        $userProfile = $this->fetchUserProfile();
+        if (is_null($userProfile)) {
+            return new ApiProblemResponse(new ApiProblem(403, "You do not have access!"));
+        }
+
+        $data = (array) $data;
+        $inputFilter = $this->getInputFilter();
+
+        try {
+         
+            $inputFilter->add(['name' => 'createdAt']);
+            $inputFilter->get('createdAt')->setValue(new \DateTime('now'));
+
+            $inputFilter->add(['name' => 'updatedAt']);
+            $inputFilter->get('updatedAt')->setValue(new \DateTime('now'));
+
+            $result = $this->getMajorService()->createMajor($inputFilter);
+        } catch (Exception $e) {
+            return new ApiProblemResponse(new ApiProblem(500, $e->getMessage()));
+        }
+
+        return $result;
     }
 
     /**
@@ -47,7 +88,11 @@ class MajorResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
+        $major = $this->majorMapper->fetchOneBy(['uuid' => $id]);
+        if (!$major) {
+            return new ApiProblemResponse(new ApiProblem(404, "Data not found"));
+        }
+        return $major;
     }
 
     /**
@@ -58,7 +103,27 @@ class MajorResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
+        $userProfile = $this->fetchUserProfile();
+        if ($userProfile === null) {
+            return new ApiProblemResponse(new ApiProblem(403, "You do not have access!"));
+        }
+        
+
+       
+        if (isset($queryParams['order'])) {
+            $order = $queryParams['order'];
+            unset($queryParams['order']);
+        }
+
+        if (isset($queryParams['asc'])) {
+            $asc = $queryParams['asc'];
+            unset($queryParams['asc']);
+        }
+        $queryParams = [];
+        $qb = $this->majorMapper->fetchAll($queryParams);
+        $paginatorAdapter = $this->majorMapper->createPaginatorAdapter($qb);
+        // return new ZendPaginator($paginatorAdapter);
+        return new Paginator($paginatorAdapter);
     }
 
     /**
@@ -105,5 +170,25 @@ class MajorResource extends AbstractResourceListener
     public function update($id, $data)
     {
         return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
+    }
+
+     /**
+     * Get the value of majorService
+     */
+    public function getMajorService()
+    {
+        return $this->majorService;
+    }
+
+    /**
+     * Set the value of majorService
+     *
+     * @return  self
+     */
+    public function setMajorService($majorService)
+    {
+        $this->majorService = $majorService;
+
+        return $this;
     }
 }
