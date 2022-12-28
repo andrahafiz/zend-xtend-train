@@ -1,11 +1,31 @@
 <?php
+
 namespace University\V1\Rest\Room;
 
+use Exception;
+use University\Mapper\RoomTrait;
+use User\Mapper\UserAclTrait;
+use User\Mapper\UserProfileTrait;
+use User\V1\Rest\AbstractResource;
+use Zend\Paginator\Paginator;
 use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
+use ZF\ApiProblem\ApiProblemResponse;
 
-class RoomResource extends AbstractResourceListener
+class RoomResource extends AbstractResource
 {
+    use UserProfileTrait;
+    use RoomTrait;
+
+    /**
+     * @var \University\V1\Service\Room
+     */
+    protected $roomService;
+
+    public function __construct($userProfileMapper, $roomMapper)
+    {
+        $this->setUserProfileMapper($userProfileMapper);
+        $this->setRoomMapper($roomMapper);
+    }   
     /**
      * Create a resource
      *
@@ -14,7 +34,28 @@ class RoomResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        return new ApiProblem(405, 'The POST method has not been defined');
+        $userProfile = $this->fetchUserProfile();
+        if (is_null($userProfile)) {
+            return new ApiProblemResponse(new ApiProblem(403, "You do not have access!"));
+        }
+
+        $data = (array) $data;
+        $inputFilter = $this->getInputFilter();
+
+        try {
+         
+            $inputFilter->add(['name' => 'createdAt']);
+            $inputFilter->get('createdAt')->setValue(new \DateTime('now'));
+
+            $inputFilter->add(['name' => 'updatedAt']);
+            $inputFilter->get('updatedAt')->setValue(new \DateTime('now'));
+
+            $result = $this->getRoomService()->create($inputFilter);
+        } catch (Exception $e) {
+            return new ApiProblemResponse(new ApiProblem(500, $e->getMessage()));
+        }
+
+        return $result;
     }
 
     /**
@@ -47,7 +88,11 @@ class RoomResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
+        $room = $this->roomMapper->fetchOneBy(['uuid' => $id]);
+        if (!$room) {
+            return new ApiProblemResponse(new ApiProblem(404, "Data not found"));
+        }
+        return $room;
     }
 
     /**
@@ -58,7 +103,27 @@ class RoomResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
+        $userProfile = $this->fetchUserProfile();
+        if ($userProfile === null) {
+            return new ApiProblemResponse(new ApiProblem(403, "You do not have access!"));
+        }
+        
+
+       
+        if (isset($queryParams['order'])) {
+            $order = $queryParams['order'];
+            unset($queryParams['order']);
+        }
+
+        if (isset($queryParams['asc'])) {
+            $asc = $queryParams['asc'];
+            unset($queryParams['asc']);
+        }
+        $queryParams = [];
+        $qb = $this->roomMapper->fetchAll($queryParams);
+        $paginatorAdapter = $this->roomMapper->createPaginatorAdapter($qb);
+        // return new ZendPaginator($paginatorAdapter);
+        return new Paginator($paginatorAdapter);
     }
 
     /**
@@ -105,5 +170,25 @@ class RoomResource extends AbstractResourceListener
     public function update($id, $data)
     {
         return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
+    }
+
+     /**
+     * Get the value of roomService
+     */
+    public function getRoomService()
+    {
+        return $this->roomService;
+    }
+
+    /**
+     * Set the value of roomService
+     *
+     * @return  self
+     */
+    public function setRoomService($roomService)
+    {
+        $this->roomService = $roomService;
+
+        return $this;
     }
 }

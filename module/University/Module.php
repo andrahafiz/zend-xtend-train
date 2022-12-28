@@ -20,11 +20,18 @@ class Module implements ApigilityProviderInterface
         $facultyEventListener = $sm->get(\University\V1\Service\Listener\FacultyEventListener::class);
         $facultyEventListener->attach($facultyService->getEventManager());
 
-        // faculty
+        // major
         $majorService = $sm->get(\University\V1\Service\Major::class);
         $majorEventListener = $sm->get(\University\V1\Service\Listener\MajorEventListener::class);
         $majorEventListener->attach($majorService->getEventManager());
-
+      
+        // room
+        $roomService = $sm->get(\University\V1\Service\Room::class);
+        $roomEventListener = $sm->get(\University\V1\Service\Listener\RoomEventListener::class);
+        // var_dump(1234);
+        // exit;
+        $roomEventListener->attach($roomService->getEventManager());
+        
     }
 
     public function getConfig()

@@ -12,6 +12,8 @@ return [
             \University\V1\Service\Listener\FacultyEventListener::class => \University\V1\Service\Listener\FacultyEventListenerFactory::class,
             \University\V1\Service\Major::class => \University\V1\Service\MajorFactory::class,
             \University\V1\Service\Listener\MajorEventListener::class => \University\V1\Service\Listener\MajorEventListenerFactory::class,
+            \University\V1\Service\Room::class => \University\V1\Service\RoomFactory::class,
+            \University\V1\Service\Listener\RoomEventListener::class => \University\V1\Service\Listener\RoomEventListenerFactory::class,
         ],
         'abstract_factories' => [
             0 => \University\Mapper\AbstractMapperFactory::class,
@@ -22,6 +24,7 @@ return [
             'University\\Hydrator\\University' => \University\V1\Hydrator\UniversityHydratorFactory::class,
             'University\\Hydrator\\Faculty' => \University\V1\Hydrator\FacultyHydratorFactory::class,
             'University\\Hydrator\\Major' => \University\V1\Hydrator\MajorHydratorFactory::class,
+            'University\\Hydrator\\Room' => \University\V1\Hydrator\RoomHydratorFactory::class,
         ],
     ],
     'router' => [
@@ -288,7 +291,7 @@ return [
                 'entity_identifier_name' => 'uuid',
                 'route_name' => 'university.rest.room',
                 'route_identifier_name' => 'uuid',
-                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+                'hydrator' => 'University\\Hydrator\\Room',
             ],
             \University\Entity\Faculty::class => [
                 'entity_identifier_name' => 'uuid',
