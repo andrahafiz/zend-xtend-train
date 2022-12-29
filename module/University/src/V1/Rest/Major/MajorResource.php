@@ -141,17 +141,24 @@ class MajorResource extends AbstractResource
         return new Paginator($paginatorAdapter);
     }
 
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function patch($id, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
+  /**
+ * Patch (partial in-place update) a resource
+ *
+ * @param  mixed $id
+ * @param  mixed $data
+ * @return ApiProblem|mixed
+ */
+public function patch($id, $data)
+{
+    $room = $this->getMajorMapper()->fetchOneBy(['uuid' => $id]);
+    if (is_null($room)) {
+        return new ApiProblemResponse(new ApiProblem(404, "Major data not found!"));
     }
+    $inputFilter = $this->getInputFilter();
+
+    $this->getMajorService()->update($room, $inputFilter);
+    return $room;
+}
 
     /**
      * Patch (partial in-place update) a collection or members of a collection

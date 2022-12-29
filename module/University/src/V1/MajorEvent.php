@@ -20,6 +20,10 @@ class MajorEvent extends Event
     const EVENT_DELETE_MAJOR_ERROR   = 'delete.major.error';
     const EVENT_DELETE_MAJOR_SUCCESS = 'delete.major.success';
 
+    const EVENT_UPDATE_MAJOR         = 'update.major';
+    const EVENT_UPDATE_MAJOR_ERROR   = 'update.major.error';
+    const EVENT_UPDATE_MAJOR_SUCCESS = 'update.major.success';
+
     /**
      * @var University\Entity\Major
      */
@@ -43,6 +47,9 @@ class MajorEvent extends Event
     protected $userProfile;
 
     protected $deleteData;
+
+    protected $updateData;
+
     /**
      * @var string
      */
@@ -94,6 +101,15 @@ class MajorEvent extends Event
         return $this;
     }
 
+    public function getUpdateData()
+    {
+        return $this->updateData;
+    }
+
+    public function setUpdateData($updateData)
+    {
+        $this->updateData = $updateData;
+    }
 
     /**
      * Get the value of inputFilter

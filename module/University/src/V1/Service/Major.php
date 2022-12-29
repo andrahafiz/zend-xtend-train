@@ -1,4 +1,5 @@
 <?php
+
 namespace University\V1\Service;
 
 use Zend\EventManager\EventManagerAwareTrait;
@@ -94,7 +95,32 @@ class Major
             return true;
         }
     }
+    /**
+     * Update Major
+     *
+     * @param \University\Entity\Major  $room
+     * @param array                     $updateData
+     */
+    public function update($room, $inputFilter)
+    {
+        $roomEvent = $this->getMajorEvent();
+        $roomEvent->setMajorEntity($room);
 
+        $roomEvent->setUpdateData($inputFilter->getValues());
+        $roomEvent->setInputFilter($inputFilter);
+        $roomEvent->setName(MajorEvent::EVENT_UPDATE_MAJOR);
+
+        $update = $this->getEventManager()->triggerEvent($roomEvent);
+        if ($update->stopped()) {
+            $roomEvent->setName(MajorEvent::EVENT_UPDATE_MAJOR_ERROR);
+            $roomEvent->setException($update->last());
+            $this->getEventManager()->triggerEvent($roomEvent);
+            throw $roomEvent->getException();
+        } else {
+            $roomEvent->setName(MajorEvent::EVENT_UPDATE_MAJOR_SUCCESS);
+            $this->getEventManager()->triggerEvent($roomEvent);
+        }
+    }
 
     public function createMassMajor($account, $units)
     {

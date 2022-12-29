@@ -49,6 +49,12 @@ class MajorEventListener implements ListenerAggregateInterface
             [$this, 'deleteMajor'],
             500
         );
+
+        $this->listeners[] = $events->attach(
+            MajorEvent::EVENT_UPDATE_MAJOR,
+            [$this, 'updateMajor'],
+            500
+        );
     }
 
     public function createMajor(MajorEvent $event)
@@ -98,6 +104,50 @@ class MajorEventListener implements ListenerAggregateInterface
             );
         } catch (\Exception $e) {
             $this->logger->log(\Psr\Log\LogLevel::ERROR, "{function} : Something Error! \nError_message: " . $e->getMessage(), ["function" => __FUNCTION__]);
+        }
+    }
+
+    /**
+     * Update Major
+     *
+     * @param  SignupEvent $event
+     * @return void|\Exception
+     */
+    public function updateMajor(MajorEvent $event)
+    {
+        try {
+            $majorEntity = $event->getMajorEntity();
+            $majorEntity->setUpdatedAt(new \DateTime('now'));
+            $updateData  = $event->getUpdateData();
+            if (!$event->getInputFilter() instanceof InputFilterInterface) {
+                throw new InvalidArgumentException('Input Filter not set');
+            }
+
+            $major = $this->getMajorHydrator()->hydrate($updateData, $majorEntity);
+
+            $this->getMajorMapper()->save($major);
+            $uuid = $major->getUuid();
+            $event->setMajorEntity($major);
+            $this->logger->log(
+                \Psr\Log\LogLevel::INFO,
+                "{function}: Major data {uuid} updated successfully \n {data}",
+                [
+                    "function" => __FUNCTION__,
+                    "uuid" => $uuid,
+                    "data" => json_encode($updateData),
+                ]
+            );
+        } catch (\Exception $e) {
+            $event->stopPropagation(true);
+            $this->logger->log(
+                \Psr\Log\LogLevel::ERROR,
+                "{function} : Something Error! \nError_message: {message}",
+                [
+                    "message" => $e->getMessage(),
+                    "function" => __FUNCTION__
+                ]
+            );
+            return $e;
         }
     }
 
