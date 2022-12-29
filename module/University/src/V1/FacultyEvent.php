@@ -15,6 +15,15 @@ class FacultyEvent extends Event
     const  EVENT_CREATE_MASS_FACULTY          = 'create.mass.faculty';
     const EVENT_CREATE_MASS_FACULTY_SUCCESS  = 'create.mass.faculty.success';
     const EVENT_CREATE_MASS_FACULTY_ERROR    = 'create.mass.faculty.error';
+
+    const EVENT_DELETE_FACULTY         = 'delete.faculty';
+    const EVENT_DELETE_FACULTY_ERROR   = 'delete.faculty.error';
+    const EVENT_DELETE_FACULTY_SUCCESS = 'delete.faculty.success';
+  
+    const EVENT_UPDATE_FACULTY         = 'update.faculty';
+    const EVENT_UPDATE_FACULTY_ERROR   = 'update.faculty.error';
+    const EVENT_UPDATE_FACULTY_SUCCESS = 'update.faculty.success';
+
     /**
      * @var University\Entity\Faculty
      */
@@ -36,6 +45,11 @@ class FacultyEvent extends Event
     protected $exception;
 
     protected $userProfile;
+
+    protected $updateData;
+
+    protected $deleteData;
+
 
     /**
      * @var string
@@ -131,6 +145,36 @@ class FacultyEvent extends Event
     public function setUserProfile(\User\Entity\UserProfile $userProfile)
     {
         $this->userProfile = $userProfile;
+
+        return $this;
+    }
+
+    public function getUpdateData()
+    {
+        return $this->updateData;
+    }
+
+    public function setUpdateData($updateData)
+    {
+        $this->updateData = $updateData;
+    }
+
+    /**
+     * Get the value of deleteData
+     */
+    public function getDeleteData()
+    {
+        return $this->deleteData;
+    }
+
+    /**
+     * Set the value of deleteData
+     *
+     * @return  self
+     */
+    public function setDeleteData($deleteData)
+    {
+        $this->deleteData = $deleteData;
 
         return $this;
     }

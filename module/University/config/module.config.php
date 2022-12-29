@@ -179,9 +179,9 @@ return [
                 2 => 'multipart/form-data',
             ],
             'University\\V1\\Rest\\Faculty\\Controller' => [
-                0 => 'application/vnd.university.v1+json',
-                1 => 'application/hal+json',
-                2 => 'application/json',
+                0 => 'application/hal+json',
+                1 => 'application/json',
+                2 => 'multipart/form-data',
             ],
             'University\\V1\\Rest\\Major\\Controller' => [
                 0 => 'application/hal+json',
@@ -200,8 +200,8 @@ return [
                 1 => 'multipart/form-data',
             ],
             'University\\V1\\Rest\\Faculty\\Controller' => [
-                0 => 'application/vnd.university.v1+json',
-                1 => 'application/json',
+                0 => 'application/json',
+                1 => 'multipart/form-data',
             ],
             'University\\V1\\Rest\\Major\\Controller' => [
                 0 => 'application/json',

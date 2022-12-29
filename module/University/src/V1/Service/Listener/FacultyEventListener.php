@@ -43,6 +43,18 @@ class FacultyEventListener implements ListenerAggregateInterface
             [$this, 'createFaculty'],
             500
         );
+
+        $this->listeners[] = $events->attach(
+            FacultyEvent::EVENT_DELETE_FACULTY,
+            [$this, 'deleteFaculty'],
+            500
+        );
+
+        $this->listeners[] = $events->attach(
+            FacultyEvent::EVENT_UPDATE_FACULTY,
+            [$this, 'updateFaculty'],
+            500
+        );
     }
 
     public function createFaculty(FacultyEvent $event)
@@ -74,6 +86,105 @@ class FacultyEventListener implements ListenerAggregateInterface
             return $e;
         }
     }
+
+    public function deleteFaculty(FacultyEvent $event)
+    {
+        try {
+            $deletedData = $event->getDeleteData();
+            $result = $this->getFacultyMapper()->delete($deletedData);
+            $uuid   = $deletedData->getUuid();
+
+            $this->logger->log(
+                \Psr\Log\LogLevel::INFO,
+                "{function} {uuid}: Data room deleted successfully",
+                [
+                    'uuid' => $uuid,
+                    "function" => __FUNCTION__
+                ]
+            );
+        } catch (\Exception $e) {
+            $this->logger->log(\Psr\Log\LogLevel::ERROR, "{function} : Something Error! \nError_message: " . $e->getMessage(), ["function" => __FUNCTION__]);
+        }
+    }
+
+      /**
+     * Update Faculty
+     *
+     * @param  SignupEvent $event
+     * @return void|\Exception
+     */
+    public function updateFaculty(FacultyEvent $event)
+    {
+        try {
+           $facultyEntity = $event->getFacultyEntity();
+           $facultyEntity->setUpdatedAt(new \DateTime('now'));
+            $updateData  = $event->getUpdateData();
+            // $fileConfig = $this->getFileConfig()['room'];
+            // $destinationFolder = $fileConfig['photo_dir'];
+            // unset photo for now. Still stuck
+            // unset($updateData['photo']);
+            if (!$event->getInputFilter() instanceof InputFilterInterface) {
+                throw new InvalidArgumentException('Input Filter not set');
+            }
+
+            // test 1
+            // adding filter for photo
+            // $imgIcon = $event->getInputFilter()->get('photo')->getValue();
+            // // var_dump($imgIcon);
+            // if (isset($imgIcon)) {
+            //     $inputPhoto  = $event->getInputFilter()->get('photo');
+            //     $inputPhoto->getFilterChain()
+            //     ->attach(new \Zend\Filter\File\RenameUpload([
+            //         'target' => $destinationFolder,
+            //         'use_upload_extension' => true,
+            //         'overwrite' => true
+            //         ]));
+            //     $updateData['path']  = str_replace('data/', '', $imgIcon['tmp_name']);
+            //     // var_dump($updateData['path']);
+            //     $nameIconSmall = $updateData['path'];
+            //     $event->getInputFilter()->get('photo')->setValue($nameIconSmall);
+            // }
+
+            // test 2
+            //$facultyPath =$facultyEntity->getPath();
+            // var_dump($facultyPath);
+            // $tmpName = $updateData['photo']['tmp_name'];
+            // if ($tmpName != "") {
+            //     $newPath = str_replace('data/', '', $tmpName);
+            //    $facultyPath = $newPath;
+            //     var_dump($facultyPath);
+            // }
+
+           $faculty = $this->getFacultyHydrator()->hydrate($updateData,$facultyEntity);
+
+            // if using test 2
+            //$faculty->setPath($facultyPath);
+            $this->getFacultyMapper()->save($faculty);
+            $uuid =$faculty->getUuid();
+            $event->setFacultyEntity($faculty);
+            $this->logger->log(
+                \Psr\Log\LogLevel::INFO,
+                "{function}: Faculty data {uuid} updated successfully \n {data}",
+                [
+                    "function" => __FUNCTION__,
+                    "uuid" => $uuid,
+                    "data" => json_encode($updateData),
+                ]
+            );
+        } catch (\Exception $e) {
+            $event->stopPropagation(true);
+            $this->logger->log(
+                \Psr\Log\LogLevel::ERROR,
+                "{function} : Something Error! \nError_message: {message}",
+                [
+                    "message" => $e->getMessage(),
+                    "function" => __FUNCTION__
+                ]
+            );
+            return $e;
+        }
+    }
+
 
     /**
      * Get the value of facultyHydrator
