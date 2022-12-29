@@ -15,6 +15,11 @@ class MajorEvent extends Event
     const  EVENT_CREATE_MASS_MAJOR          = 'create.mass.major';
     const EVENT_CREATE_MASS_MAJOR_SUCCESS  = 'create.mass.major.success';
     const EVENT_CREATE_MASS_MAJOR_ERROR    = 'create.mass.major.error';
+
+    const EVENT_DELETE_MAJOR         = 'delete.major';
+    const EVENT_DELETE_MAJOR_ERROR   = 'delete.major.error';
+    const EVENT_DELETE_MAJOR_SUCCESS = 'delete.major.success';
+
     /**
      * @var University\Entity\Major
      */
@@ -37,6 +42,7 @@ class MajorEvent extends Event
 
     protected $userProfile;
 
+    protected $deleteData;
     /**
      * @var string
      */
@@ -60,12 +66,34 @@ class MajorEvent extends Event
      *
      * @return  self
      */
-    public function setMajorEntity( \University\Entity\Major $majorEntity)
+    public function setMajorEntity(\University\Entity\Major $majorEntity)
     {
         $this->majorEntity = $majorEntity;
 
         return $this;
     }
+
+
+    /**
+     * Get the value of deleteData
+     */
+    public function getDeleteData()
+    {
+        return $this->deleteData;
+    }
+
+    /**
+     * Set the value of deleteData
+     *
+     * @return  self
+     */
+    public function setDeleteData($deleteData)
+    {
+        $this->deleteData = $deleteData;
+
+        return $this;
+    }
+
 
     /**
      * Get the value of inputFilter
@@ -154,29 +182,7 @@ class MajorEvent extends Event
 
         return $this;
     }
-    /**
-     * Get the value of companyEntity
-     *
-     * @return  User\Entity\Company
-     */
-    public function getCompanyEntity()
-    {
-        return $this->companyEntity;
-    }
 
-    /**
-     * Set the value of companyEntity
-     *
-     * @param  User\Entity\Company  $companyEntity
-     *
-     * @return  self
-     */
-    public function setCompanyEntity(\User\Entity\Company $companyEntity)
-    {
-        $this->companyEntity = $companyEntity;
-
-        return $this;
-    }
     /**
      * Get the value of units
      */

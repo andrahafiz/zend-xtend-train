@@ -43,6 +43,12 @@ class MajorEventListener implements ListenerAggregateInterface
             [$this, 'createMajor'],
             500
         );
+
+        $this->listeners[] = $events->attach(
+            MajorEvent::EVENT_DELETE_MAJOR,
+            [$this, 'deleteMajor'],
+            500
+        );
     }
 
     public function createMajor(MajorEvent $event)
@@ -74,6 +80,27 @@ class MajorEventListener implements ListenerAggregateInterface
             return $e;
         }
     }
+
+    public function deleteMajor(MajorEvent $event)
+    {
+        try {
+            $deletedData = $event->getDeleteData();
+            $result = $this->getMajorMapper()->delete($deletedData);
+            $uuid   = $deletedData->getUuid();
+
+            $this->logger->log(
+                \Psr\Log\LogLevel::INFO,
+                "{function} {uuid}: Data room deleted successfully",
+                [
+                    'uuid' => $uuid,
+                    "function" => __FUNCTION__
+                ]
+            );
+        } catch (\Exception $e) {
+            $this->logger->log(\Psr\Log\LogLevel::ERROR, "{function} : Something Error! \nError_message: " . $e->getMessage(), ["function" => __FUNCTION__]);
+        }
+    }
+
 
     /**
      * Get the value of majorHydrator

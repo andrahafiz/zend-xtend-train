@@ -58,7 +58,7 @@ class MajorResource extends AbstractResource
         return $result;
     }
 
-    /**
+     /**
      * Delete a resource
      *
      * @param  mixed $id
@@ -66,7 +66,22 @@ class MajorResource extends AbstractResource
      */
     public function delete($id)
     {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
+        $userProfile = $this->fetchUserProfile();
+        if (is_null($userProfile) || is_null($userProfile->getAccount())) {
+            return new ApiProblemResponse(new ApiProblem(404, "You do not have access"));
+        }
+
+        try {
+            $room = $this->getMajorMapper()->fetchOneBy(['uuid' => $id]);
+            if (is_null($room)) {
+                return new ApiProblem(404, "Major data Not Found");
+            }
+            return $this->getMajorService()->delete($room);
+        } catch (\RuntimeException $e) {
+            return new ApiProblemResponse(new ApiProblem(500, $e->getMessage()));
+        }
+
+        return $room;
     }
 
     /**

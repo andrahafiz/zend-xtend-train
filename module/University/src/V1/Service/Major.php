@@ -5,6 +5,7 @@ use Zend\EventManager\EventManagerAwareTrait;
 use Zend\InputFilter\InputFilter as ZendInputFilter;
 use Psr\Log\LoggerAwareTrait;
 use University\V1\MajorEvent;
+use University\Entity\Major as MajorEntity;
 use User\Mapper\AccountTrait as AccountMapperTrait;
 use University\Mapper\MajorTrait as MajorMapperTrait;
 
@@ -73,6 +74,24 @@ class Major
             $majorEvent->setName(MajorEvent::EVENT_CREATE_MAJOR_SUCCESS);
             $this->getEventManager()->triggerEvent($majorEvent);
             return $majorEvent->getMajorEntity();
+        }
+    }
+
+    public function delete(MajorEntity $deletedData)
+    {
+        $majorEvent = new MajorEvent();
+        $majorEvent->setDeleteData($deletedData);
+        $majorEvent->setName(MajorEvent::EVENT_DELETE_MAJOR);
+        $create = $this->getEventManager()->triggerEvent($majorEvent);
+        if ($create->stopped()) {
+            $majorEvent->setName(MajorEvent::EVENT_DELETE_MAJOR_ERROR);
+            $majorEvent->setException($create->last());
+            $this->getEventManager()->triggerEvent($majorEvent);
+            throw $majorEvent->getException();
+        } else {
+            $majorEvent->setName(MajorEvent::EVENT_DELETE_MAJOR_SUCCESS);
+            $this->getEventManager()->triggerEvent($majorEvent);
+            return true;
         }
     }
 
