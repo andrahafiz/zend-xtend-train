@@ -43,6 +43,12 @@ class RoomEventListener implements ListenerAggregateInterface
             [$this, 'createRoom'],
             500
         );
+
+        $this->listeners[] = $events->attach(
+            RoomEvent::EVENT_DELETE_ROOM,
+            [$this, 'deleteRoom'],
+            500
+        );
     }
 
     public function createRoom(RoomEvent $event)
@@ -71,6 +77,26 @@ class RoomEventListener implements ListenerAggregateInterface
                 ]
             );
             return $e;
+        }
+    }
+
+    public function deleteRoom(RoomEvent $event)
+    {
+        try {
+            $deletedData = $event->getDeleteData();
+            $result = $this->getRoomMapper()->delete($deletedData);
+            $uuid   = $deletedData->getUuid();
+
+            $this->logger->log(
+                \Psr\Log\LogLevel::INFO,
+                "{function} {uuid}: Data room deleted successfully",
+                [
+                    'uuid' => $uuid,
+                    "function" => __FUNCTION__
+                ]
+            );
+        } catch (\Exception $e) {
+            $this->logger->log(\Psr\Log\LogLevel::ERROR, "{function} : Something Error! \nError_message: " . $e->getMessage(), ["function" => __FUNCTION__]);
         }
     }
 

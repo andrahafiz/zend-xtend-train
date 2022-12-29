@@ -35,6 +35,23 @@ class Room
         }
     }
 
+    public function delete(RoomEntity $deletedData)
+    {
+        $roomEvent = new RoomEvent();
+        $roomEvent->setDeleteData($deletedData);
+        $roomEvent->setName(RoomEvent::EVENT_DELETE_ROOM);
+        $create = $this->getEventManager()->triggerEvent($roomEvent);
+        if ($create->stopped()) {
+            $roomEvent->setName(RoomEvent::EVENT_DELETE_ROOM_ERROR);
+            $roomEvent->setException($create->last());
+            $this->getEventManager()->triggerEvent($roomEvent);
+            throw $roomEvent->getException();
+        } else {
+            $roomEvent->setName(RoomEvent::EVENT_DELETE_ROOM_SUCCESS);
+            $this->getEventManager()->triggerEvent($roomEvent);
+            return true;
+        }
+    }
 
     public function getRoomEvent()
     {

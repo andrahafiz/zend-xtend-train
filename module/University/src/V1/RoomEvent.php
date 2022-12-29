@@ -15,6 +15,10 @@ class RoomEvent extends Event
     const  EVENT_CREATE_MASS_ROOM          = 'create.mass.room';
     const EVENT_CREATE_MASS_ROOM_SUCCESS  = 'create.mass.room.success';
     const EVENT_CREATE_MASS_ROOM_ERROR    = 'create.mass.room.error';
+
+    const EVENT_DELETE_ROOM         = 'delete.room';
+    const EVENT_DELETE_ROOM_ERROR   = 'delete.room.error';
+    const EVENT_DELETE_ROOM_SUCCESS = 'delete.room.success';
     /**
      * @var University\Entity\Room
      */
@@ -154,29 +158,27 @@ class RoomEvent extends Event
 
         return $this;
     }
-    /**
-     * Get the value of companyEntity
-     *
-     * @return  User\Entity\Company
+
+ /**
+     * Get the value of deleteData
      */
-    public function getCompanyEntity()
+    public function getDeleteData()
     {
-        return $this->companyEntity;
+        return $this->deleteData;
     }
 
     /**
-     * Set the value of companyEntity
-     *
-     * @param  User\Entity\Company  $companyEntity
+     * Set the value of deleteData
      *
      * @return  self
      */
-    public function setCompanyEntity(\User\Entity\Company $companyEntity)
+    public function setDeleteData($deleteData)
     {
-        $this->companyEntity = $companyEntity;
+        $this->deleteData = $deleteData;
 
         return $this;
     }
+
     /**
      * Get the value of units
      */
