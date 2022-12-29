@@ -19,6 +19,12 @@ class RoomEvent extends Event
     const EVENT_DELETE_ROOM         = 'delete.room';
     const EVENT_DELETE_ROOM_ERROR   = 'delete.room.error';
     const EVENT_DELETE_ROOM_SUCCESS = 'delete.room.success';
+  
+    const EVENT_UPDATE_ROOM         = 'update.room';
+    const EVENT_UPDATE_ROOM_ERROR   = 'update.room.error';
+    const EVENT_UPDATE_ROOM_SUCCESS = 'update.room.success';
+
+
     /**
      * @var University\Entity\Room
      */
@@ -40,6 +46,10 @@ class RoomEvent extends Event
     protected $exception;
 
     protected $userProfile;
+
+    protected $updateData;
+
+    protected $deleteData;
 
     /**
      * @var string
@@ -117,6 +127,16 @@ class RoomEvent extends Event
         $this->exception = $exception;
 
         return $this;
+    }
+
+    public function getUpdateData()
+    {
+        return $this->updateData;
+    }
+
+    public function setUpdateData($updateData)
+    {
+        $this->updateData = $updateData;
     }
 
     /**

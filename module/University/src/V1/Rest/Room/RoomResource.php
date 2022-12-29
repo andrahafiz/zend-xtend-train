@@ -150,7 +150,14 @@ class RoomResource extends AbstractResource
      */
     public function patch($id, $data)
     {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
+        $room = $this->getRoomMapper()->fetchOneBy(['uuid' => $id]);
+        if (is_null($room)) {
+            return new ApiProblemResponse(new ApiProblem(404, "Room data not found!"));
+        }
+        $inputFilter = $this->getInputFilter();
+
+        $this->getRoomService()->update($room, $inputFilter);
+        return $room;
     }
 
     /**
@@ -175,6 +182,7 @@ class RoomResource extends AbstractResource
         return new ApiProblem(405, 'The PUT method has not been defined for collections');
     }
 
+    
     /**
      * Update a resource
      *

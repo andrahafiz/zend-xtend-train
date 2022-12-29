@@ -35,6 +35,33 @@ class Room
         }
     }
 
+     /**
+     * Update Room
+     *
+     * @param \University\Entity\Room  $room
+     * @param array                     $updateData
+     */
+    public function update($room, $inputFilter)
+    {
+        $roomEvent = $this->getRoomEvent();
+        $roomEvent->setRoomEntity($room);
+
+        $roomEvent->setUpdateData($inputFilter->getValues());
+        $roomEvent->setInputFilter($inputFilter);
+        $roomEvent->setName(RoomEvent::EVENT_UPDATE_ROOM);
+
+        $update = $this->getEventManager()->triggerEvent($roomEvent);
+        if ($update->stopped()) {
+            $roomEvent->setName(RoomEvent::EVENT_UPDATE_ROOM_ERROR);
+            $roomEvent->setException($update->last());
+            $this->getEventManager()->triggerEvent($roomEvent);
+            throw $roomEvent->getException();
+        } else {
+            $roomEvent->setName(RoomEvent::EVENT_UPDATE_ROOM_SUCCESS);
+            $this->getEventManager()->triggerEvent($roomEvent);
+        }
+    }
+
     public function delete(RoomEntity $deletedData)
     {
         $roomEvent = new RoomEvent();
