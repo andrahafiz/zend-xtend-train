@@ -12,11 +12,20 @@ class UniversityEvent extends Event
     const EVENT_CREATE_UNIVERSITY_SUCCESS   = 'create.university.success';
     const EVENT_CREATE_UNIVERSITY_ERROR     = 'create.university.error';
 
-    const EVENT_CREATE_MASS_UNIVERSITY          = 'create.mass.university';
+    const  EVENT_CREATE_MASS_UNIVERSITY          = 'create.mass.university';
     const EVENT_CREATE_MASS_UNIVERSITY_SUCCESS  = 'create.mass.university.success';
     const EVENT_CREATE_MASS_UNIVERSITY_ERROR    = 'create.mass.university.error';
+
+    const EVENT_DELETE_UNIVERSITY         = 'delete.university';
+    const EVENT_DELETE_UNIVERSITY_ERROR   = 'delete.university.error';
+    const EVENT_DELETE_UNIVERSITY_SUCCESS = 'delete.university.success';
+  
+    const EVENT_UPDATE_UNIVERSITY         = 'update.university';
+    const EVENT_UPDATE_UNIVERSITY_ERROR   = 'update.university.error';
+    const EVENT_UPDATE_UNIVERSITY_SUCCESS = 'update.university.success';
+
     /**
-     * @var University\Entity\University
+     * @var \University\Entity\University
      */
 
     protected $units;
@@ -36,6 +45,10 @@ class UniversityEvent extends Event
     protected $exception;
 
     protected $userProfile;
+
+    protected $updateData;
+
+    protected $deleteData;
 
     /**
      * @var string
@@ -115,6 +128,36 @@ class UniversityEvent extends Event
         return $this;
     }
 
+    public function getUpdateData()
+    {
+        return $this->updateData;
+    }
+
+    public function setUpdateData($updateData)
+    {
+        $this->updateData = $updateData;
+    }
+
+    /**
+     * Get the value of deleteData
+     */
+    public function getDeleteData()
+    {
+        return $this->deleteData;
+    }
+
+    /**
+     * Set the value of deleteData
+     *
+     * @return  self
+     */
+    public function setDeleteData($deleteData)
+    {
+        $this->deleteData = $deleteData;
+
+        return $this;
+    }
+
     /**
      * Get the value of userProfile
      */
@@ -151,29 +194,6 @@ class UniversityEvent extends Event
     public function setUniversityCollection(array $universityCollection)
     {
         $this->universityCollection = $universityCollection;
-
-        return $this;
-    }
-    /**
-     * Get the value of companyEntity
-     *
-     * @return  User\Entity\Company
-     */
-    public function getCompanyEntity()
-    {
-        return $this->companyEntity;
-    }
-
-    /**
-     * Set the value of companyEntity
-     *
-     * @param  User\Entity\Company  $companyEntity
-     *
-     * @return  self
-     */
-    public function setCompanyEntity(\User\Entity\Company $companyEntity)
-    {
-        $this->companyEntity = $companyEntity;
 
         return $this;
     }

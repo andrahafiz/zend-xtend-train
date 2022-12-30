@@ -31,7 +31,7 @@ class University extends AbstractMapper implements MapperInterface
         } else {
             $qb->orderBy('c.' . $order, $sort);
         }
-
+ 
         $query = $qb->getQuery();
         $query->useQueryCache(true);
         $query->useResultCache(true, 600, $cacheKey);

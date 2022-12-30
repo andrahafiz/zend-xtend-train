@@ -179,7 +179,7 @@ class RoomEvent extends Event
         return $this;
     }
 
- /**
+    /**
      * Get the value of deleteData
      */
     public function getDeleteData()

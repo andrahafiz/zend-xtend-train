@@ -37,7 +37,7 @@ class CompanyEvent extends Event
     protected $userProfileEntity;
 
     /**
-     * @var User\Entity\Company
+     * @var \User\Entity\Company
      */
     protected $companyEntity;
 

@@ -5,6 +5,7 @@ use Zend\EventManager\EventManagerAwareTrait;
 use Zend\InputFilter\InputFilter as ZendInputFilter;
 use Psr\Log\LoggerAwareTrait;
 use University\V1\UniversityEvent;
+use University\Entity\University as UniversityEntity;
 use User\Mapper\AccountTrait as AccountMapperTrait;
 use University\Mapper\UniversityTrait as UniversityMapperTrait;
 
@@ -76,6 +77,50 @@ class University
         }
     }
 
+      /**
+     * Update University
+     *
+     * @param \University\Entity\University  $university
+     * @param array                     $updateData
+     */
+    public function update($university, $inputFilter)
+    {
+        $universityEvent = $this->getUniversityEvent();
+        $universityEvent->setUniversityEntity($university);
+
+        $universityEvent->setUpdateData($inputFilter->getValues());
+        $universityEvent->setInputFilter($inputFilter);
+        $universityEvent->setName(UniversityEvent::EVENT_UPDATE_UNIVERSITY);
+
+        $update = $this->getEventManager()->triggerEvent($universityEvent);
+        if ($update->stopped()) {
+            $universityEvent->setName(UniversityEvent::EVENT_UPDATE_UNIVERSITY_ERROR);
+            $universityEvent->setException($update->last());
+            $this->getEventManager()->triggerEvent($universityEvent);
+            throw $universityEvent->getException();
+        } else {
+            $universityEvent->setName(UniversityEvent::EVENT_UPDATE_UNIVERSITY_SUCCESS);
+            $this->getEventManager()->triggerEvent($universityEvent);
+        }
+    }
+
+    public function delete(UniversityEntity $deletedData)
+    {
+        $universityEvent = new UniversityEvent();
+        $universityEvent->setDeleteData($deletedData);
+        $universityEvent->setName(UniversityEvent::EVENT_DELETE_UNIVERSITY);
+        $create = $this->getEventManager()->triggerEvent($universityEvent);
+        if ($create->stopped()) {
+            $universityEvent->setName(UniversityEvent::EVENT_DELETE_UNIVERSITY_ERROR);
+            $universityEvent->setException($create->last());
+            $this->getEventManager()->triggerEvent($universityEvent);
+            throw $universityEvent->getException();
+        } else {
+            $universityEvent->setName(UniversityEvent::EVENT_DELETE_UNIVERSITY_SUCCESS);
+            $this->getEventManager()->triggerEvent($universityEvent);
+            return true;
+        }
+    }
 
     public function createMassUniversity($account, $units)
     {

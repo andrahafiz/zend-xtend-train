@@ -66,7 +66,22 @@ class UniversityResource extends AbstractResource
      */
     public function delete($id)
     {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
+        $userProfile = $this->fetchUserProfile();
+        if (is_null($userProfile) || is_null($userProfile->getAccount())) {
+            return new ApiProblemResponse(new ApiProblem(404, "You do not have access"));
+        }
+
+        try {
+            $university = $this->getUniversityMapper()->fetchOneBy(['uuid' => $id]);
+            if (is_null($university)) {
+                return new ApiProblem(404, "University data Not Found");
+            }
+            return $this->getUniversityService()->delete($university);
+        } catch (\RuntimeException $e) {
+            return new ApiProblemResponse(new ApiProblem(500, $e->getMessage()));
+        }
+
+        return $university;
     }
 
     /**
@@ -135,7 +150,13 @@ class UniversityResource extends AbstractResource
      */
     public function patch($id, $data)
     {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
+        $university = $this->getUniversityMapper()->fetchOneBy(['uuid' => $id]);
+        if (is_null($university)) {
+            return new ApiProblemResponse(new ApiProblem(404, "University data not found!"));
+        }
+        $inputFilter = $this->getInputFilter();
+        $this->getUniversityService()->update($university, $inputFilter);
+        return $university;
     }
 
     /**
